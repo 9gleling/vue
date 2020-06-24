@@ -1,0 +1,5 @@
+export default {
+    GET_ROOM_LIST: 'GET_ROOM_LIST',
+    SEND_MSG: 'SEND_MSG',
+    GET_CHAT_DATA: 'GET_CHAT_DATA'
+}

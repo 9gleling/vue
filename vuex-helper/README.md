@@ -4,8 +4,7 @@
 
 - 데이터 중앙 관리(상태관리패턴)
 
-- helper(mapState, mapMutations ...) 사용 x
-
+- - helper(mapState, mapMutations ...) 사용 o
 ## 정리
 - 1. 기본 구조
   - state: vue의 data의 개념과 비슷

@@ -212,8 +212,8 @@ const mutations = {
             }
             
             state.roomData[i]['unreadMsgCnt'] = cnt;
+            // Vue.set(roomData[i], 'unreadMsgCnt', cnt);
         }
-        
     },
 
     // action을 통한 비동기
@@ -253,11 +253,9 @@ const mutations = {
         if(flag) currentMsg['displayTime'] = 'N';
         
         Vue.set(chatList['roomInfo'], chatList['roomInfo'].length, insertParams);
-        
     },
     [constant.GET_CHAT_DATA]: (state, roomId) => {
         state.chatData = state.roomData.filter(item => parseInt(item.roomId) === parseInt(roomId))[0];
-        
         if(state.chatData['unreadMsgCnt']) {
             const totalMsgLen = state.chatData['roomInfo'].length;
     

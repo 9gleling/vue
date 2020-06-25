@@ -26,7 +26,7 @@
                 <input type="file" round class="upload" v-on:change="onFileChange" style="display:none;">
             </div>
         </div>
-        <div v-show="localImgFlag" class="wrap_img_list">
+        <!-- <div v-show="localImgFlag" class="wrap_img_list">
             <ul id="local_img_list">
                 <li v-for="(item, key) in localImgList" v-bind:key="key">
                     <a v-on:click="sendLocalImg(item)">
@@ -34,13 +34,13 @@
                     </a>
                 </li>
             </ul>
-        </div>
+        </div> -->
     </div>
     <div id="wrap_chat_list" >
         <ul class="chat_list" id="chat_list">
-            <template v-for="chat in chatList" >
-                <li class="chat_timestamp" v-if="chat.chkFirstMsg === 'Y'" v-bind:key="chat.id">{{moment(chat.createdTime).format('ll')}}</li>
-                <li class="message" v-bind:key="chat.id+chat.createdTime" v-bind:class="chat.chkMyContent == 'N' ? 'incoming_message' : 'sent_message'">
+            <template v-for="(chat, key) in chatData" >
+                <li class="chat_timestamp" v-if="chat.chkFirstMsg === 'Y'" v-bind:key="key+chat.createdTime">{{moment(chat.createdTime).format('ll')}}</li>
+                <li class="message" v-bind:key="key" v-bind:class="chat.chkMyContent == 'N' ? 'incoming_message' : 'sent_message'">
                     <div class="message_content">
                         <span v-if="chat.content" class="message_bubble">
                         {{chat.content}}
@@ -72,19 +72,13 @@
 </template>
 <script>
 
-import dataModel from '../models/dataModel.js'
 export default {
     name: 'RoomComponent',
     created() {
-        this.getChatList();
+        this.$store.dispatch('getChatData', this.$route.params.Id);
     },
     data: function () {
-       
         return {
-            
-            chatList: [],
-            chatName: '',
-            chkFirstMsg: '',
             inputVal: '',
             imgVal: '',
             imgLocalVal: '',
@@ -94,29 +88,27 @@ export default {
         }
     },
     computed: {
-        hasChatList: function() {
+        chatData() {
+            return this.$store.state.chatStore.chatData;
+        },
+        chatName() {
+            return this.$store.state.chatStore.chatName;
+        },
+        chkFirstMsg() {
+            return this.$store.state.chatStore.chkFirstMsg;
+        },
+        hasChatData() {
             
-            return this.chatList.length > 0
+            return this.chatData.length > 0
         }
     },
     watch: {
-        chatList: function() {
+        chatData() {
             this.moveScroll();
         }
     },
     methods: {
-        getChatList: function() {
-            const roomId = this.$route.params.Id;
-            const data = dataModel.chatList(roomId) ;
-            const chatList = data[1];
-            this.localImgList = data[0];
-            
-            this.chatName = chatList['name'];
-            this.chkFirstMsg = chatList['roomInfo'][0]['createdTime'];
-            this.chatList = chatList['roomInfo'];
-            
-        },
-        sendMsg: function() {
+        sendMsg() {
             const params = {};
             params.roomId = this.$route.params.Id;
             params.content = this.inputVal;
@@ -125,36 +117,34 @@ export default {
             else if(this.imgLocalVal) params.imgContent = this.imgLocalVal;
             
             if(params.content.trim() || params.imgContent) {
-                dataModel.sendMsg(params);
+                this.$store.dispatch('sendMsg', params);
                 setTimeout(this.incomingMsg, 1000);
                 
                 this.inputVal = '';
                 this.imgVal = '';
                 this.imgLocalVal = '';
             }
-             
+
         },
-        incomingMsg: function() {
+        incomingMsg() {
             const params = {};
             params.roomId = this.$route.params.Id;
             params.content = '응';
             params.userName = this.chatName;
             
-            dataModel.sendMsg(params);
+            this.$store.dispatch('sendMsg', params);
         },
         imgUpload: function(el) {
             const elem = document.querySelector('.'+el);
             elem.click();
         },
-        moveScroll: function() {
+        moveScroll() {
             const objDiv = document.querySelector("#wrap_chat_list");
 
             if(this.scrollTop < objDiv.scrollHeight)
                 this.scrollTop = objDiv.scrollHeight + 150;
 
             window.scrollTo(0, this.scrollTop)
-
-
         },
         onFileChange(e) {
             let files = e.target.files || e.dataTransfer.files
@@ -181,8 +171,6 @@ export default {
             if(this.localImgFlag) this.localImgFlag = false;
             else this.localImgFlag = true;  
         },
-        
-     
     },
 }
 </script>

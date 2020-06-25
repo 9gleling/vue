@@ -1,10 +1,10 @@
 
-## vuex
+# vuex
 - npm install vuex
 
 - 데이터 중앙 관리(상태관리패턴)
 
-### 정리
+## 정리
 - 1. 기본 구조
   - state: vue의 data의 개념과 비슷
   - getters: vue의 computed와 비슷(캐싱)

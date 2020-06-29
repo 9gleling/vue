@@ -61,7 +61,7 @@
     </div>
     <div class="wrap_send_message">
         <form v-on:enter.prevent="sendMessage">
-            <input type="text" class="inputText" v-model="inputVal" placeholder="메사지를 입력하세요.">
+            <input type="text" class="inputText" v-model="inputVal" placeholder="메세지를 입력하세요.">
             <button v-on:click.prevent="sendMessage" class="send_msg"><img src="@/assets/images/img-send.png" class="img_send"></button>
         </form>
         <div v-if="imgVal" class="chk_img">

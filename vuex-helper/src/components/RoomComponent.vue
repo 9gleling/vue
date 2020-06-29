@@ -60,9 +60,9 @@
         </ul>
     </div>
     <div class="wrap_send_message">
-        <form v-on:enter.prevent="sendMsg">
+        <form v-on:enter.prevent="sendMessage">
             <input type="text" class="inputText" v-model="inputVal" placeholder="메사지를 입력하세요.">
-            <button v-on:click.prevent="sendMsg" class="send_msg"><img src="@/assets/images/img-send.png" class="img_send"></button>
+            <button v-on:click.prevent="sendMessage" class="send_msg"><img src="@/assets/images/img-send.png" class="img_send"></button>
         </form>
         <div v-if="imgVal" class="chk_img">
             <img src="@/assets/images/img-upload.png" >
@@ -71,11 +71,14 @@
 </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'RoomComponent',
     created() {
-        this.$store.dispatch('getChatData', this.$route.params.Id);
+        this.getChatData(this.$route.params.Id);
+
+        // this.$store.dispatch('getChatData', this.$route.params.Id);
     },
     data: function () {
         return {
@@ -88,19 +91,12 @@ export default {
         }
     },
     computed: {
-        chatData() {
-            return this.$store.state.chatStore.chatData;
-        },
-        chatName() {
-            return this.$store.state.chatStore.chatName;
-        },
-        chkFirstMsg() {
-            return this.$store.state.chatStore.chkFirstMsg;
-        },
-        hasChatData() {
-            
-            return this.chatData.length > 0
-        }
+        ...mapState({
+            'roomLists': state => state.chatStore.roomData,
+            'chatData': state => state.chatStore.chatData,
+            'chatName': state => state.chatStore.chatName,
+            'chkFirstMsg': state => state.chatStore.chkFirstMsg,
+        }),
     },
     watch: {
         chatData() {
@@ -108,7 +104,12 @@ export default {
         }
     },
     methods: {
-        sendMsg() {
+        ...mapActions([
+            'getChatData',
+            'sendMsg',
+        ]),
+
+        sendMessage() {
             const params = {};
             params.roomId = this.$route.params.Id;
             params.content = this.inputVal;
@@ -117,7 +118,7 @@ export default {
             else if(this.imgLocalVal) params.imgContent = this.imgLocalVal;
             
             if(params.content.trim() || params.imgContent) {
-                this.$store.dispatch('sendMsg', params);
+                this.sendMsg(params);
                 setTimeout(this.incomingMsg, 1000);
                 
                 this.inputVal = '';
@@ -132,7 +133,7 @@ export default {
             params.content = '응';
             params.userName = this.chatName;
             
-            this.$store.dispatch('sendMsg', params);
+            this.sendMsg(params);
         },
         imgUpload: function(el) {
             const elem = document.querySelector('.'+el);

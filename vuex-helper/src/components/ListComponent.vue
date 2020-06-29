@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 export default {
     name: 'ListComponent',
     data () {
@@ -63,44 +65,61 @@ export default {
         }
     },
     created() {
-        this.$store.dispatch('getRoomList');
+        this.getRoomList();
+        // this.$store.dispatch('getRoomList');
+        // console.log(this.getRoomList());
+        
     },
     computed: {
-        roomLists() {
-            return this.$store.state.chatStore.roomData;
-        },
+        ...mapState({
+            'roomLists': state => state.chatStore.roomData
+        }),
+        // roomLists() {
+        //     return this.$store.state.chatStore.roomData;
+        // },
         hasRoomList() {
             return this.roomLists.length > 0
         }
     },
     methods: {
+        ...mapActions([
+            'getRoomList',
+            'sendMsg',
+        ]),
+        // test() {
+        //     this.getRoomList()
+        // },
         moveScroll() {
             window.scrollTo(0, 0);
         },
-        sendMsg() {
+        sendMessage() {
             
             const params = {};
             params.roomId = 1;
             params.content = '술먹자' 
             params.userName = '승민';
-
-            this.$store.dispatch('sendMsg', params);
-            this.$store.dispatch('getRoomList');
+            
+            this.sendMsg(params);
+            this.getRoomList();
+            // this.$store.dispatch('sendMsg', params);
+            // this.$store.dispatch('getRoomList');
         },
-        sendMsg2() {
+        sendMessage2() {
             
             const params = {};
             params.roomId = 2;
             params.content = '??????' 
             params.userName = '호필';
 
-            this.$store.dispatch('sendMsg', params);
-            this.$store.dispatch('getRoomList');
+            this.sendMsg(params);
+            this.getRoomList();
+            // this.$store.dispatch('sendMsg', params);
+            // this.$store.dispatch('getRoomList');
         },
     },
     mounted() {
-        setInterval(this.sendMsg, 5000);
-        setInterval(this.sendMsg2, 2000);
+        // setInterval(this.sendMessage, 5000);
+        // setInterval(this.sendMessage2, 2000);
     },
     beforeDestroy(){
         clearInterval(this.sendMsg);

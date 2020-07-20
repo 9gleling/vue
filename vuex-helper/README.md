@@ -21,9 +21,11 @@
     - src/store/modules/store1.js
     - src/store/modules/store2.js
     - 여러개의 stroe를 modules로 묶어줌
-      - src/store/index.js 
-      - modules: {
-      -  store1,
-      -  store2,
-      - },
+      `src/store/index.js`
+      ```
+      modules: {
+        store1,
+        store2,
+      },
+      ```
 
